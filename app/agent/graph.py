@@ -6,10 +6,10 @@ from langchain_openai import ChatOpenAI
 
 from app.agent.state import AgentState
 from app.agent.prompts import SYSTEM_PROMPT
-from app.tools.habit_tools import add_habit,tick_habit,get_weekly_summary
+from app.tools.habit_tools import add_habit,tick_habit,get_weekly_summary,list_habits,daily_status
 
 # Registering a list of tools (Python functions)
-TOOLS=[add_habit,tick_habit,get_weekly_summary]
+TOOLS=[add_habit,tick_habit,get_weekly_summary,list_habits,daily_status]
 
 def build_graph(model_name):
     # Constructs the agent

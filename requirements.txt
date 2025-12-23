@@ -7,3 +7,5 @@ langchain
 langchain-core
 langchain-openai
 langgraph
+python-telegram-bot==21.6
+httpx

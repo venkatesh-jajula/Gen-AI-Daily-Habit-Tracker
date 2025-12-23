@@ -47,3 +47,26 @@ def get_weekly_summary(ref_day: str | None = None) -> dict:
         return weekly_summary_calendar_week(conn, ref_dt)
     finally:
         conn.close()
+
+@tool
+def list_habits() -> dict:
+    """List all active habits."""
+    from app.main import get_conn
+    conn: sqlite3.Connection = get_conn()
+    try:
+        habits = HabitRepository(conn).list_active_habits()
+        return {"habits": habits}
+    finally:
+        conn.close()
+
+@tool
+def daily_status(ref_day: str | None = None) -> dict:
+    """Show daily tick status (default today)."""
+    from app.main import get_conn
+    conn: sqlite3.Connection = get_conn()
+    try:
+        ref_dt = _parse_date(ref_day)
+        status = HabitRepository(conn).daily_status(ref_dt)
+        return {"date": ref_dt.isoformat(), "status": status}
+    finally:
+        conn.close()

@@ -1,5 +1,5 @@
 import sqlite3
-from datetime import datetime, timezone
+from datetime import datetime, timezone, date
 
 class HabitRepository:
     def __init__(self, conn):
@@ -33,6 +33,26 @@ class HabitRepository:
             return f"Ticked {name} for {tick_dt.isoformat()}."
         except sqlite3.IntegrityError:
             return f"Already Ticked '{name}' for {tick_dt.isoformat()}."
+    
+    def list_active_habits(self)->list[str]:
+        cur = self.conn.cursor()
+        cur.execute("SELECT name FROM habits WHERE is_active=1 ORDER BY lower(name)")
+        rows = cur.fetchall()
+        return [r["name"] for r in rows]
+    
+    def daily_status(self,ref_date:date)->list[dict]:
+        """It returns the status of all active habits for a given day, showing whether each habit was ticked or not."""
+        cur = self.conn.cursor()
+        cur.execute("SELECT habit_id, name FROM habits WHERE is_active=1 ORDER BY lower(name)")
+        habits = cur.fetchall()
+        
+        out = []
+        for habit in habits:
+            cur.execute("SELECT 1 FROM habit_ticks WHERE habit_id=? AND tick_date=? LIMIT 1",
+            (habit["habit_id"], ref_date.isoformat()),)
+            ticked = cur.fetchone() is not None
+            out.append({"habit":habit["name"], "ticked":ticked})
+        return out
     
 
 """Database Operations"""            
